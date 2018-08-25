@@ -15,6 +15,7 @@ class UserAdminCreationForm(forms.ModelForm):
 	def clean_password2(self):
 		password1 = self.cleaned_data.get("password1")
 		password2 = self.cleaned_data.get("password2")
+
 		if password1 and password2 and password1 != password2:
 			raise forms.ValidationError("Passwords don't match")
 		return password2
@@ -22,6 +23,7 @@ class UserAdminCreationForm(forms.ModelForm):
 	def save(self, commit=True):
 		user = super(UserAdminCreationForm, self).save(commit=False)
 		user.set_password(self.cleaned_data["password1"])
+
 		if commit:
 			user.save()
 		return user
@@ -33,7 +35,18 @@ class UserAdminChangeForm(forms.ModelForm):
 
 	class Meta:
 		model = User
-		fields = ('name', 'email', 'password', 'active', 'admin')
+		fields = (
+			'name',
+			'last_name',
+			'email',
+			'city',
+			'password',
+			'active',
+			'admin',
+			'is_chief',
+			'is_substitute_chief',
+			'is_director'
+		)
 
 	def clean_password(self):
 		return self.initial["password"]
@@ -72,10 +85,9 @@ class RegisterForm(forms.ModelForm):
 
 class UserChangeInfoForm(forms.Form):
 	email = forms.EmailField(required=False)
-	full_name =forms.CharField(required=False)
-	country = forms.CharField(required=False)
+	name =forms.CharField(required=False)
+	last_name = forms.CharField(required=False)
 	city = forms.CharField(required=False)
-	phone = forms.CharField(required=False)
 
 
 class UserChangePasswordForm(forms.Form):
